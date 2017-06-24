@@ -710,8 +710,16 @@ namespace LetsEncrypt.ACME.Simple
                 certificate = new X509Certificate2(pfxFilename, Properties.Settings.Default.PFXPassword,
                     flags);
 
-                certificate.FriendlyName =
-                    $"{binding.Host} {DateTime.Now.ToString(Properties.Settings.Default.FileDateFormat)}";
+                if (binding.Host.IndexOf(",") >= 0)
+                {
+                    certificate.FriendlyName =
+                        $"*.letsencrypt.SAN {DateTime.Now.ToString(Properties.Settings.Default.FileDateFormat)}";
+                }
+                else
+                {
+                    certificate.FriendlyName =
+                        $"{binding.Host} {DateTime.Now.ToString(Properties.Settings.Default.FileDateFormat)}";
+                }
                 Log.Debug("{FriendlyName}", certificate.FriendlyName);
 
                 Log.Information("Adding Certificate to Store");
